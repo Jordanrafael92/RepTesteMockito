@@ -1,11 +1,16 @@
 package com.jorsilva.repTesteMockito.services;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jorsilva.repTesteMockito.dto.CityDTO;
 import com.jorsilva.repTesteMockito.dto.EventDTO;
 import com.jorsilva.repTesteMockito.entities.City;
 import com.jorsilva.repTesteMockito.entities.Event;
@@ -35,5 +40,11 @@ public class EventService {
 		entity.setDate(dto.getDate());
 		entity.setUrl(dto.getUrl());
 		entity.setCity(new City(dto.getCityId(), null));
+	}
+	
+	@Transactional(readOnly = true)
+	public List<EventDTO> findAll() {
+		List<Event> list = repository.findAll();
+		return list.stream().map(x -> new EventDTO(x)).collect(Collectors.toList());
 	}
 }
