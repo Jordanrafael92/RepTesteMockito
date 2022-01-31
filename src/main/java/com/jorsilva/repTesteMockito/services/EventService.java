@@ -19,18 +19,18 @@ import com.jorsilva.repTesteMockito.services.exceptions.ResourceNotFoundExceptio
 
 @Service
 public class EventService {
-	
+
 	@Autowired
 	private EventRepository repository;
-	
-	@Transactional(readOnly=true)
+
+	@Transactional(readOnly = true)
 	public EventDTO update(Long id, EventDTO dto) {
 		try {
 			Event entity = repository.getOne(id);
 			copyDtoToEntity(dto, entity);
 			entity = repository.save(entity);
 			return new EventDTO(entity);
-		}catch(EntityNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found = " + id);
 		}
 	}
@@ -41,10 +41,18 @@ public class EventService {
 		entity.setUrl(dto.getUrl());
 		entity.setCity(new City(dto.getCityId(), null));
 	}
-	
+
 	@Transactional(readOnly = true)
 	public List<EventDTO> findAll() {
 		List<Event> list = repository.findAll();
 		return list.stream().map(x -> new EventDTO(x)).collect(Collectors.toList());
+	}
+
+	@Transactional
+	public EventDTO insert(EventDTO dto) {
+		Event entity = new Event();
+		entity.setName(dto.getName());
+		entity = repository.save(entity);
+		return new EventDTO(entity);
 	}
 }
